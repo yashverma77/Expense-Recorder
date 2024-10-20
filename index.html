@@ -3,12 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Enhanced Expense Recorder</title>
+    <title>Expense Recorder</title>
 
-    <!-- Google Font (Poppins) -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
 
-    <!-- Font Awesome for Icons -->
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
     <style>
@@ -45,7 +44,7 @@
             margin-left: 10px;
         }
 
-        /* Settings Section */
+        
         .settings-section, .input-section {
             display: flex;
             justify-content: space-between;
@@ -67,7 +66,7 @@
             background-color: #f9f9f9;
         }
 
-        /* Set Savings Button */
+       
         #setSavingsBtn {
             padding: 12px 20px;
             background-color: #28a745;
@@ -83,7 +82,7 @@
             transform: translateY(-2px);
         }
 
-        /* Input Section */
+       
         .input-section input {
             padding: 12px;
             font-size: 1rem;
@@ -107,7 +106,7 @@
             transform: translateY(-2px);
         }
 
-        /* Table */
+        
         table {
             width: 100%;
             border-collapse: collapse;
@@ -121,7 +120,7 @@
             font-size: 1rem;
         }
 
-        /* Delete Button */
+       
         .delete-btn {
             padding: 8px 15px;
             background-color: #dc3545;
@@ -137,7 +136,7 @@
             transform: translateY(-2px);
         }
 
-        /* Balance Display */
+        
         .balance {
             display: flex;
             justify-content: space-between;
@@ -157,7 +156,6 @@
             color: #28a745;
         }
 
-        /* Footer */
         footer {
             margin-top: 40px;
             text-align: center;
@@ -169,10 +167,10 @@
 <body>
 
 <div class="container">
-    <!-- Updated Header with Icons -->
+ 
     <h1><i class="fas fa-wallet"></i>Expense Recorder<i class="fas fa-wallet"></i></h1>
 
-    <!-- Settings Section: Set Savings and Currency -->
+   
     <div class="settings-section">
         <input type="number" id="totalSavingsInput" placeholder="Enter your total savings">
         <select id="currencySelector">
@@ -185,7 +183,7 @@
         <button id="setSavingsBtn">Set Savings</button>
     </div>
 
-    <!-- Input Section: Add Expense -->
+    
     <div class="input-section">
         <input type="text" id="description" placeholder="Expense Description">
         <input type="number" id="amount" placeholder="Amount">
@@ -193,7 +191,7 @@
         <button id="addExpenseBtn">Add Expense</button>
     </div>
 
-    <!-- Expense Table -->
+    
     <table id="expenseTable">
         <thead>
             <tr>
@@ -204,11 +202,11 @@
             </tr>
         </thead>
         <tbody>
-            <!-- Expenses will be added here dynamically -->
+            
         </tbody>
     </table>
 
-    <!-- Balance Display -->
+   
     <div class="balance">
         <div>Total Spent: <span id="totalSpent">0</span> <span id="currencySpent">$</span></div>
         <div>Savings: <span id="totalSavings">0</span> <span id="currencySavings">$</span></div>
@@ -234,7 +232,7 @@
     let savings = 0;
     let selectedCurrency = '$';
 
-    // Set Savings and Currency
+    
     setSavingsBtn.addEventListener('click', function() {
         savings = parseFloat(totalSavingsInput.value) || 0;
         selectedCurrency = currencySelector.value;
@@ -243,7 +241,7 @@
         currencySavingsEl.textContent = selectedCurrency;
     });
 
-    // Add Expense
+   
     addExpenseBtn.addEventListener('click', function() {
         const description = document.getElementById('description').value;
         const amount = parseFloat(document.getElementById('amount').value);
@@ -254,7 +252,7 @@
             return;
         }
 
-        // Add expense to the table
+       
         const row = document.createElement('tr');
         row.innerHTML = `
             <td>${description}</td>
@@ -264,18 +262,18 @@
         `;
         expenseTableBody.appendChild(row);
 
-        // Update total spent and savings
+        
         totalSpent += amount;
         savings -= amount;
         totalSpentEl.textContent = totalSpent.toFixed(2);
         totalSavingsEl.textContent = savings.toFixed(2);
 
-        // Clear inputs
+        
         document.getElementById('description').value = '';
         document.getElementById('amount').value = '';
         document.getElementById('date').value = '';
 
-        // Delete expense
+       
         row.querySelector('.delete-btn').addEventListener('click', function() {
             row.remove();
             totalSpent -= amount;
