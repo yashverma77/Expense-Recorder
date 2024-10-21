@@ -333,17 +333,27 @@
     });
 
     // Download Expense History
-    downloadBtn.addEventListener('click', function() {
-        let csvContent = "data:text/csv;charset=utf-8," + "Description,Amount,Date\n" + 
-            expenses.map(exp => `${exp.description},${exp.amount.toFixed(2)},${new Date(exp.date).toLocaleDateString()}`).join("\n");
-        const encodedUri = encodeURI(csvContent);
-        const link = document.createElement("a");
-        link.setAttribute("href", encodedUri);
-        link.setAttribute("download", "expense_history.csv");
-        document.body.appendChild(link); 
-        link.click();
-        document.body.removeChild(link);
-    });
+   // Download Expense History with savings, total expense, and final balance
+downloadBtn.addEventListener('click', function() {
+    let csvContent = "data:text/csv;charset=utf-8,";
+    
+    // Add Initial Savings, Total Expense, and Final Savings
+    csvContent += `Initial Savings,${savings.toFixed(2)} ${selectedCurrency}\n`;
+    csvContent += `Total Expenses,${totalSpent.toFixed(2)} ${selectedCurrency}\n`;
+    csvContent += `Remaining Savings,${(savings - totalSpent).toFixed(2)} ${selectedCurrency}\n\n`;
+
+    // Add transaction details
+    csvContent += "Description,Amount,Date\n";
+    csvContent += expenses.map(exp => `${exp.description},${exp.amount.toFixed(2)},${new Date(exp.date).toLocaleDateString()}`).join("\n");
+
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", "expense_history.csv");
+    document.body.appendChild(link); 
+    link.click();
+    document.body.removeChild(link);
+});
 
     // Clear All Expenses and Reset Savings
     clearBtn.addEventListener('click', function() {
