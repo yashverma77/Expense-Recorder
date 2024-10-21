@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title> Expense Recorder</title>
+    <title>Expense Recorder</title>
 
     <!-- Google Font (Poppins) -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
@@ -45,7 +45,6 @@
             margin-left: 10px;
         }
 
-        /* Settings Section */
         .settings-section, .input-section {
             display: flex;
             justify-content: space-between;
@@ -67,42 +66,28 @@
             background-color: #f9f9f9;
         }
 
-        /* Set Savings Button */
-        #setSavingsBtn {
+        #setSavingsBtn, #addExpenseBtn, #downloadBtn, #clearBtn {
             padding: 12px 20px;
-            background-color: #28a745;
-            color: white;
             border: none;
             border-radius: 8px;
             cursor: pointer;
             transition: background-color 0.3s, transform 0.2s;
         }
 
+        #setSavingsBtn {
+            background-color: #28a745;
+            color: white;
+        }
         #setSavingsBtn:hover {
             background-color: #218838;
             transform: translateY(-2px);
         }
 
-        /* Input Section */
-        .input-section input {
-            padding: 12px;
-            font-size: 1rem;
-            border: 1px solid #ccc;
-            border-radius: 8px;
-            transition: 0.3s;
-        }
-
-        .input-section button {
-            padding: 12px;
+        #addExpenseBtn {
             background-color: #007bff;
             color: white;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: background-color 0.3s, transform 0.2s;
         }
-
-        .input-section button:hover {
+        #addExpenseBtn:hover {
             background-color: #0056b3;
             transform: translateY(-2px);
         }
@@ -121,7 +106,6 @@
             font-size: 1rem;
         }
 
-        /* Delete Button */
         .delete-btn {
             padding: 8px 15px;
             background-color: #dc3545;
@@ -137,7 +121,6 @@
             transform: translateY(-2px);
         }
 
-        /* Balance Display */
         .balance {
             display: flex;
             justify-content: space-between;
@@ -149,15 +132,6 @@
             font-weight: bold;
         }
 
-        .balance .spent {
-            color: #dc3545;
-        }
-
-        .balance .savings {
-            color: #28a745;
-        }
-
-        /* Buttons Section (Download and Clear) */
         .buttons-section {
             display: flex;
             justify-content: space-between;
@@ -165,36 +139,23 @@
         }
 
         #downloadBtn {
-            padding: 12px 20px;
             background-color: #ff8800;
             color: white;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: background-color 0.3s, transform 0.2s;
         }
-
         #downloadBtn:hover {
             background-color: #ff7700;
             transform: translateY(-2px);
         }
 
         #clearBtn {
-            padding: 12px 20px;
-            background-color: #ff007f; /* Bright pink/cherish color */
+            background-color: #ff007f;
             color: white;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: background-color 0.3s, transform 0.2s;
         }
-
         #clearBtn:hover {
             background-color: #e60073;
             transform: translateY(-2px);
         }
 
-        /* Footer */
         footer {
             margin-top: 40px;
             text-align: center;
@@ -206,10 +167,8 @@
 <body>
 
 <div class="container">
-    <!-- Updated Header with Icons -->
     <h1><i class="fas fa-wallet"></i>Expense Recorder<i class="fas fa-wallet"></i></h1>
 
-    <!-- Settings Section: Set Savings and Currency -->
     <div class="settings-section">
         <input type="number" id="totalSavingsInput" placeholder="Enter your total savings">
         <select id="currencySelector">
@@ -222,7 +181,6 @@
         <button id="setSavingsBtn">Set Savings</button>
     </div>
 
-    <!-- Input Section: Add Expense -->
     <div class="input-section">
         <input type="text" id="description" placeholder="Expense Description">
         <input type="number" id="amount" placeholder="Amount">
@@ -230,7 +188,6 @@
         <button id="addExpenseBtn">Add Expense</button>
     </div>
 
-    <!-- Expense Table -->
     <table id="expenseTable">
         <thead>
             <tr>
@@ -241,17 +198,14 @@
             </tr>
         </thead>
         <tbody>
-            <!-- Expenses will be added here dynamically -->
         </tbody>
     </table>
 
-    <!-- Balance Display -->
     <div class="balance">
         <div>Total Spent: <span id="totalSpent">0</span> <span id="currencySpent">$</span></div>
         <div>Savings: <span id="totalSavings">0</span> <span id="currencySavings">$</span></div>
     </div>
 
-    <!-- Buttons Section (Download and Clear) -->
     <div class="buttons-section">
         <button id="downloadBtn">Download Expense History</button>
         <button id="clearBtn">Clear All</button>
@@ -282,42 +236,55 @@
 
     // Set Savings and Currency
     setSavingsBtn.addEventListener('click', function() {
+        if (totalSavingsInput.value.trim() === "") {
+            alert("Total savings cannot be empty.");
+            return;
+        }
+        
         savings = parseFloat(totalSavingsInput.value) || 0;
         selectedCurrency = currencySelector.value;
         totalSavingsEl.textContent = savings.toFixed(2);
         currencySpentEl.textContent = selectedCurrency;
         currencySavingsEl.textContent = selectedCurrency;
 
-        // Disable savings input and currency selector after setting
         totalSavingsInput.disabled = true;
         currencySelector.disabled = true;
     });
 
     // Add Expense
     addExpenseBtn.addEventListener('click', function() {
-        const description = document.getElementById('description').value;
+        const description = document.getElementById('description').value.trim();
         const amount = parseFloat(document.getElementById('amount').value) || 0;
         const date = document.getElementById('date').value;
 
-        if (description && amount > 0 && date) {
-            expenses.push({ description, amount, date });
-            totalSpent += amount;
-
-            // Update Table
-            const row = expenseTableBody.insertRow();
-            row.innerHTML = `
-                <td>${description}</td>
-                <td>${amount.toFixed(2)}</td>
-                <td>${new Date(date).toLocaleDateString()}</td>
-                <td><button class="delete-btn">Delete</button></td>
-            `;
-            totalSpentEl.textContent = totalSpent.toFixed(2);
-
-            // Clear Input Fields
-            document.getElementById('description').value = '';
-            document.getElementById('amount').value = '';
-            document.getElementById('date').value = '';
+        if (!description) {
+            alert("Expense description cannot be empty.");
+            return;
         }
+        if (amount <= 0) {
+            alert("Amount must be greater than 0.");
+            return;
+        }
+        if (!date) {
+            alert("Date cannot be empty.");
+            return;
+        }
+
+        expenses.push({ description, amount, date });
+        totalSpent += amount;
+
+        const row = expenseTableBody.insertRow();
+        row.innerHTML = `
+            <td>${description}</td>
+            <td>${amount.toFixed(2)}</td>
+            <td>${new Date(date).toLocaleDateString()}</td>
+            <td><button class="delete-btn">Delete</button></td>
+        `;
+        totalSpentEl.textContent = totalSpent.toFixed(2);
+
+        document.getElementById('description').value = '';
+        document.getElementById('amount').value = '';
+        document.getElementById('date').value = '';
     });
 
     // Delete Expense
@@ -333,27 +300,24 @@
     });
 
     // Download Expense History
-   // Download Expense History with savings, total expense, and final balance
-downloadBtn.addEventListener('click', function() {
-    let csvContent = "data:text/csv;charset=utf-8,";
-    
-    // Add Initial Savings, Total Expense, and Final Savings
-    csvContent += `Initial Savings,${savings.toFixed(2)} ${selectedCurrency}\n`;
-    csvContent += `Total Expenses,${totalSpent.toFixed(2)} ${selectedCurrency}\n`;
-    csvContent += `Remaining Savings,${(savings - totalSpent).toFixed(2)} ${selectedCurrency}\n\n`;
+    downloadBtn.addEventListener('click', function() {
+        let csvContent = "data:text/csv;charset=utf-8,";
+        
+        csvContent += `Initial Savings,${savings.toFixed(2)} ${selectedCurrency}\n`;
+        csvContent += `Total Expenses,${totalSpent.toFixed(2)} ${selectedCurrency}\n`;
+        csvContent += `Remaining Savings,${(savings - totalSpent).toFixed(2)} ${selectedCurrency}\n\n`;
 
-    // Add transaction details
-    csvContent += "Description,Amount,Date\n";
-    csvContent += expenses.map(exp => `${exp.description},${exp.amount.toFixed(2)},${new Date(exp.date).toLocaleDateString()}`).join("\n");
+        csvContent += "Description,Amount,Date\n";
+        csvContent += expenses.map(exp => `${exp.description},${exp.amount.toFixed(2)},${new Date(exp.date).toLocaleDateString()}`).join("\n");
 
-    const encodedUri = encodeURI(csvContent);
-    const link = document.createElement("a");
-    link.setAttribute("href", encodedUri);
-    link.setAttribute("download", "expense_history.csv");
-    document.body.appendChild(link); 
-    link.click();
-    document.body.removeChild(link);
-});
+        const encodedUri = encodeURI(csvContent);
+        const link = document.createElement("a");
+        link.setAttribute("href", encodedUri);
+        link.setAttribute("download", "expense_history.csv");
+        document.body.appendChild(link); 
+        link.click();
+        document.body.removeChild(link);
+    });
 
     // Clear All Expenses and Reset Savings
     clearBtn.addEventListener('click', function() {
