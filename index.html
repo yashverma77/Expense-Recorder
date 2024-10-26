@@ -277,50 +277,19 @@
     let selectedCurrency = '$';
     let expenses = [];
 
-    // Check if a session is active
-    const sessionActive = localStorage.getItem('sessionActive');
+    // Alert user on page refresh
+    window.onbeforeunload = function() {
+        return "All data will be lost if you leave this page. Are you sure you want to continue?";
+    };
 
     // Load data from local storage on page load
     window.onload = function() {
-        // If there is no session, clear fields and local storage
-        if (!sessionActive) {
-            localStorage.clear(); // Clear all local storage
-            totalSavingsInput.value = "";
-            totalSpentEl.textContent = "0";
-            totalSavingsEl.textContent = "0";
-            leftSavingEl.textContent = "0";
-            expenseTableBody.innerHTML = ""; // Clear the table
-        } else {
-            // Restore savings if available
-            if (localStorage.getItem('savings')) {
-                savings = parseFloat(localStorage.getItem('savings'));
-                leftSaving = savings; 
-                totalSavingsEl.textContent = savings.toFixed(2);
-                leftSavingEl.textContent = leftSaving.toFixed(2);
-                selectedCurrency = localStorage.getItem('currency');
-                currencySpentEl.textContent = selectedCurrency;
-                currencySavingsEl.textContent = selectedCurrency;
-                currencyLeftSavingEl.textContent = selectedCurrency;
-                totalSavingsInput.disabled = true;
-                currencySelector.disabled = true;
-                setSavingsBtn.disabled = true;
-            }
-
-            // Restore expenses if available
-            if (localStorage.getItem('expenses')) {
-                expenses = JSON.parse(localStorage.getItem('expenses'));
-                expenses.forEach(exp => {
-                    totalSpent += exp.amount;
-                    leftSaving -= exp.amount;
-                    addExpenseToTable(exp.description, exp.amount, exp.date);
-                });
-                totalSpentEl.textContent = totalSpent.toFixed(2);
-                leftSavingEl.textContent = leftSaving.toFixed(2);
-            }
-        }
-
-        // Set session as active for this page load
-        localStorage.setItem('sessionActive', true);
+        // Clear all fields and local storage on page load
+        totalSavingsInput.value = "";
+        totalSpentEl.textContent = "0";
+        totalSavingsEl.textContent = "0";
+        leftSavingEl.textContent = "0";
+        expenseTableBody.innerHTML = ""; // Clear the table
     };
 
     // Function to add an expense to the table
@@ -340,7 +309,6 @@
             leftSavingEl.textContent = leftSaving.toFixed(2);
             row.remove();
             expenses = expenses.filter(exp => exp.description !== description || exp.amount !== amount || exp.date !== date);
-            localStorage.setItem('expenses', JSON.stringify(expenses)); // Update local storage
         });
 
         expenseTableBody.appendChild(row);
@@ -366,10 +334,6 @@
         totalSavingsInput.disabled = true;
         currencySelector.disabled = true;
         setSavingsBtn.disabled = true;
-
-        // Save to local storage
-        localStorage.setItem('savings', savings);
-        localStorage.setItem('currency', selectedCurrency);
     });
 
     // Add expense button event
@@ -401,9 +365,6 @@
         leftSavingEl.textContent = leftSaving.toFixed(2);
 
         addExpenseToTable(description, amount, date);
-
-        // Save expenses to local storage
-        localStorage.setItem('expenses', JSON.stringify(expenses));
 
         document.getElementById('description').value = '';
         document.getElementById('amount').value = '';
@@ -447,11 +408,6 @@
             currencySpentEl.textContent = "$";
             currencySavingsEl.textContent = "$";
             currencyLeftSavingEl.textContent = "$";
-
-            // Clear local storage
-            localStorage.removeItem('savings');
-            localStorage.removeItem('currency');
-            localStorage.removeItem('expenses');
         }
     });
 
@@ -462,6 +418,7 @@
         themeToggle.classList.toggle('fa-sun');
     });
 </script>
+
 
 
 
