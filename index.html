@@ -292,6 +292,7 @@
             totalSavingsInput.disabled = true;
             currencySelector.disabled = true;
             setSavingsBtn.disabled = true;
+            totalSavingsInput.value = savings.toFixed(2); // Show savings in input field
         }
 
         if (localStorage.getItem('expenses')) {
@@ -394,12 +395,12 @@
     });
 
     // Download button event
-   downloadBtn.addEventListener('click', function() {
+    downloadBtn.addEventListener('click', function() {
         const csvContent = 'data:text/csv;charset=utf-8,' 
-            + ['Total Savings,Total Spent,Left Saving\n']
-            + [${savings.toFixed(2)},${totalSpent.toFixed(2)},${leftSaving.toFixed(2)}\n\n]
-            + ['Description,Amount,Date\n']
-            + expenses.map(exp => ${exp.description},${exp.amount.toFixed(2)},${exp.date}).join('\n');
+            + 'Total Savings,Total Spent,Left Saving\n'
+            + `${savings.toFixed(2)},${totalSpent.toFixed(2)},${leftSaving.toFixed(2)}\n\n`
+            + 'Description,Amount,Date\n'
+            + expenses.map(exp => `${exp.description},${exp.amount.toFixed(2)},${exp.date}`).join('\n');
         
         const encodedUri = encodeURI(csvContent);
         const link = document.createElement('a');
