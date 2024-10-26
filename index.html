@@ -255,7 +255,6 @@
 <footer>
     &copy; 2024 Personal Finance Tracker. All rights reserved.
 </footer>
-
 <script>
     const addExpenseBtn = document.getElementById('addExpenseBtn');
     const expenseTableBody = document.querySelector('#expenseTable tbody');
@@ -292,6 +291,7 @@
             leftSavingEl.textContent = "0";
             expenseTableBody.innerHTML = ""; // Clear the table
         } else {
+            // Restore savings if available
             if (localStorage.getItem('savings')) {
                 savings = parseFloat(localStorage.getItem('savings'));
                 leftSaving = savings; 
@@ -306,6 +306,7 @@
                 setSavingsBtn.disabled = true;
             }
 
+            // Restore expenses if available
             if (localStorage.getItem('expenses')) {
                 expenses = JSON.parse(localStorage.getItem('expenses'));
                 expenses.forEach(exp => {
@@ -461,6 +462,7 @@
         themeToggle.classList.toggle('fa-sun');
     });
 </script>
+
 
 
 </body>
