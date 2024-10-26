@@ -4,11 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Expense Recorder</title>
-
     
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
-
-   
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
     <style>
@@ -19,18 +16,20 @@
 
         body {
             font-family: 'Poppins', sans-serif;
-            background-color: #f0f8ff;
+            background-color:#f0f8ff;
             margin: 0;
             padding: 0;
+            transition: background-color 0.3s, color 0.3s;
         }
 
         .container {
             max-width: 900px;
             margin: 50px auto;
-            background-color: #ffffff;
             padding: 30px;
+            background-color: #fffaf0; /* Crème texture */
             box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
             border-radius: 15px;
+            transition: background-color 0.3s;
         }
 
         h1 {
@@ -38,11 +37,20 @@
             color: #0056b3;
             font-size: 2.5rem;
             margin-bottom: 20px;
+            position: relative;
         }
-
         h1 i {
-            margin-right: 10px;
-            margin-left: 10px;
+    margin: 0 10px;
+}
+
+        .dark-theme-toggle {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #666;
+            transition: color 0.3s;
         }
 
         .settings-section, .input-section {
@@ -92,7 +100,6 @@
             transform: translateY(-2px);
         }
 
-       
         table {
             width: 100%;
             border-collapse: collapse;
@@ -162,12 +169,44 @@
             color: #666;
             font-size: 0.9rem;
         }
+
+        
+        body.dark {
+            background-color: #2c2c2c;
+            color: #e0e0e0;
+        }
+
+        body.dark .container {
+            background-color: #3b3b3b;
+            color: #e0e0e0;
+        }
+
+        body.dark h1 {
+            color: #f0db4f;
+        }
+
+        body.dark .dark-theme-toggle {
+            color: #f0db4f;
+        }
+
+        body.dark table th, body.dark table td {
+            border-color: #666;
+        }
+
+        body.dark input, body.dark select, body.dark button {
+            background-color: #444;
+            color: #e0e0e0;
+            border-color: #666;
+        }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1><i class="fas fa-wallet"></i>Expense Recorder<i class="fas fa-wallet"></i></h1>
+    <h1>
+        <i class="fas fa-wallet"></i>Expense Recorder<i class="fas fa-wallet"></i>
+        <i class="fas fa-moon dark-theme-toggle" id="themeToggle"></i>
+    </h1>
 
     <div class="settings-section">
         <input type="number" id="totalSavingsInput" placeholder="Enter your total savings">
@@ -231,6 +270,7 @@
     const currencySelector = document.getElementById('currencySelector');
     const downloadBtn = document.getElementById('downloadBtn');
     const clearBtn = document.getElementById('clearBtn');
+    const themeToggle = document.getElementById('themeToggle');
 
     let totalSpent = 0;
     let savings = 0;
@@ -238,7 +278,58 @@
     let selectedCurrency = '$';
     let expenses = [];
 
-   
+    // Load data from local storage on page load
+    window.onload = function() {
+        if (localStorage.getItem('savings')) {
+            savings = parseFloat(localStorage.getItem('savings'));
+            leftSaving = savings; 
+            totalSavingsEl.textContent = savings.toFixed(2);
+            leftSavingEl.textContent = leftSaving.toFixed(2);
+            selectedCurrency = localStorage.getItem('currency');
+            currencySpentEl.textContent = selectedCurrency;
+            currencySavingsEl.textContent = selectedCurrency;
+            currencyLeftSavingEl.textContent = selectedCurrency;
+            totalSavingsInput.disabled = true;
+            currencySelector.disabled = true;
+            setSavingsBtn.disabled = true;
+        }
+
+        if (localStorage.getItem('expenses')) {
+            expenses = JSON.parse(localStorage.getItem('expenses'));
+            expenses.forEach(exp => {
+                totalSpent += exp.amount;
+                leftSaving -= exp.amount;
+                addExpenseToTable(exp.description, exp.amount, exp.date);
+            });
+            totalSpentEl.textContent = totalSpent.toFixed(2);
+            leftSavingEl.textContent = leftSaving.toFixed(2);
+        }
+    };
+
+    // Function to add an expense to the table
+    function addExpenseToTable(description, amount, date) {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>${description}</td>
+            <td>${amount.toFixed(2)} ${selectedCurrency}</td>
+            <td>${date}</td>
+            <td><button class="delete-btn">Delete</button></td>
+        `;
+
+        row.querySelector('.delete-btn').addEventListener('click', function() {
+            totalSpent -= amount;
+            leftSaving = savings - totalSpent;
+            totalSpentEl.textContent = totalSpent.toFixed(2);
+            leftSavingEl.textContent = leftSaving.toFixed(2);
+            row.remove();
+            expenses = expenses.filter(exp => exp.description !== description || exp.amount !== amount || exp.date !== date);
+            localStorage.setItem('expenses', JSON.stringify(expenses)); // Update local storage
+        });
+
+        expenseTableBody.appendChild(row);
+    }
+
+    // Set savings button event
     setSavingsBtn.addEventListener('click', function() {
         if (totalSavingsInput.value.trim() === "") {
             alert("Total savings cannot be empty.");
@@ -257,9 +348,14 @@
 
         totalSavingsInput.disabled = true;
         currencySelector.disabled = true;
+        setSavingsBtn.disabled = true;
+
+        // Save to local storage
+        localStorage.setItem('savings', savings);
+        localStorage.setItem('currency', selectedCurrency);
     });
 
-   
+    // Add expense button event
     addExpenseBtn.addEventListener('click', function() {
         const description = document.getElementById('description').value.trim();
         const amount = parseFloat(document.getElementById('amount').value) || 0;
@@ -282,79 +378,63 @@
 
         expenses.push({ description, amount, date });
         totalSpent += amount;
-        leftSaving -= amount;
-
-        const row = expenseTableBody.insertRow();
-        row.innerHTML = `
-            <td>${description}</td>
-            <td>${amount.toFixed(2)}</td>
-            <td>${new Date(date).toLocaleDateString()}</td>
-            <td><button class="delete-btn">Delete</button></td>
-        `;
+        leftSaving = savings - totalSpent;
 
         totalSpentEl.textContent = totalSpent.toFixed(2);
-        leftSavingEl.textContent = leftSaving.toFixed(2); 
+        leftSavingEl.textContent = leftSaving.toFixed(2);
 
-        
+        addExpenseToTable(description, amount, date);
+
+        // Save expenses to local storage
+        localStorage.setItem('expenses', JSON.stringify(expenses));
+
         document.getElementById('description').value = '';
         document.getElementById('amount').value = '';
         document.getElementById('date').value = '';
     });
 
-    
-    expenseTableBody.addEventListener('click', function(e) {
-        if (e.target.classList.contains('delete-btn')) {
-            const row = e.target.closest('tr');
-            const amount = parseFloat(row.cells[1].textContent);
-            totalSpent -= amount;
-            leftSaving += amount; 
-
-            totalSpentEl.textContent = totalSpent.toFixed(2);
-            leftSavingEl.textContent = leftSaving.toFixed(2); 
-
-            expenses = expenses.filter(exp => exp.description !== row.cells[0].textContent);
-            row.remove();
-        }
+    // Download button event
+    downloadBtn.addEventListener('click', function() {
+        const dataStr = JSON.stringify(expenses);
+        const blob = new Blob([dataStr], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'expense_history.json';
+        a.click();
     });
 
- 
+    // Clear all button event
     clearBtn.addEventListener('click', function() {
+        expenses = [];
         totalSpent = 0;
         savings = 0;
         leftSaving = 0;
 
-        totalSpentEl.textContent = totalSpent.toFixed(2);
-        totalSavingsEl.textContent = savings.toFixed(2);
-        leftSavingEl.textContent = leftSaving.toFixed(2);
-
-        expenseTableBody.innerHTML = '';
-        expenses = [];
-
-       
         totalSavingsInput.disabled = false;
-        totalSavingsInput.value = '';
         currencySelector.disabled = false;
+        setSavingsBtn.disabled = false;
+        totalSavingsInput.value = "";
 
-       
-        document.getElementById('description').value = '';
-        document.getElementById('amount').value = '';
-        document.getElementById('date').value = '';
+        expenseTableBody.innerHTML = "";
+        totalSpentEl.textContent = "0";
+        totalSavingsEl.textContent = "0";
+        leftSavingEl.textContent = "0";
+        currencySpentEl.textContent = "$";
+        currencySavingsEl.textContent = "$";
+        currencyLeftSavingEl.textContent = "$";
+
+        // Clear local storage
+        localStorage.removeItem('savings');
+        localStorage.removeItem('currency');
+        localStorage.removeItem('expenses');
     });
 
-   
-    downloadBtn.addEventListener('click', function() {
-        const csvContent = 'data:text/csv;charset=utf-8,' 
-            + ['Total Savings,Total Spent,Left Saving\n']
-            + [`${savings.toFixed(2)},${totalSpent.toFixed(2)},${leftSaving.toFixed(2)}\n\n`]
-            + ['Description,Amount,Date\n']
-            + expenses.map(exp => `${exp.description},${exp.amount.toFixed(2)},${exp.date}`).join('\n');
-        
-        const encodedUri = encodeURI(csvContent);
-        const link = document.createElement('a');
-        link.setAttribute('href', encodedUri);
-        link.setAttribute('download', 'expense_history.csv');
-        document.body.appendChild(link);
-        link.click();
+    // Theme toggle event
+    themeToggle.addEventListener('click', function() {
+        document.body.classList.toggle('dark');
+        themeToggle.classList.toggle('fa-moon');
+        themeToggle.classList.toggle('fa-sun');
     });
 </script>
 
