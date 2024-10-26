@@ -394,14 +394,19 @@
     });
 
     // Download button event
-    downloadBtn.addEventListener('click', function() {
-        const dataStr = JSON.stringify(expenses);
-        const blob = new Blob([dataStr], { type: 'application/json' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = 'expense_history.json';
-        a.click();
+   downloadBtn.addEventListener('click', function() {
+        const csvContent = 'data:text/csv;charset=utf-8,' 
+            + ['Total Savings,Total Spent,Left Saving\n']
+            + [${savings.toFixed(2)},${totalSpent.toFixed(2)},${leftSaving.toFixed(2)}\n\n]
+            + ['Description,Amount,Date\n']
+            + expenses.map(exp => ${exp.description},${exp.amount.toFixed(2)},${exp.date}).join('\n');
+        
+        const encodedUri = encodeURI(csvContent);
+        const link = document.createElement('a');
+        link.setAttribute('href', encodedUri);
+        link.setAttribute('download', 'expense_history.csv');
+        document.body.appendChild(link);
+        link.click();
     });
 
     // Clear all button event
