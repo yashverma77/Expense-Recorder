@@ -278,33 +278,48 @@
     let selectedCurrency = '$';
     let expenses = [];
 
+    // Check if a session is active
+    const sessionActive = localStorage.getItem('sessionActive');
+
     // Load data from local storage on page load
     window.onload = function() {
-        if (localStorage.getItem('savings')) {
-            savings = parseFloat(localStorage.getItem('savings'));
-            leftSaving = savings; 
-            totalSavingsEl.textContent = savings.toFixed(2);
-            leftSavingEl.textContent = leftSaving.toFixed(2);
-            selectedCurrency = localStorage.getItem('currency');
-            currencySpentEl.textContent = selectedCurrency;
-            currencySavingsEl.textContent = selectedCurrency;
-            currencyLeftSavingEl.textContent = selectedCurrency;
-            totalSavingsInput.disabled = true;
-            currencySelector.disabled = true;
-            setSavingsBtn.disabled = true;
-            totalSavingsInput.value = savings.toFixed(2); // Show savings in input field
+        // If there is no session, clear fields and local storage
+        if (!sessionActive) {
+            localStorage.clear(); // Clear all local storage
+            totalSavingsInput.value = "";
+            totalSpentEl.textContent = "0";
+            totalSavingsEl.textContent = "0";
+            leftSavingEl.textContent = "0";
+            expenseTableBody.innerHTML = ""; // Clear the table
+        } else {
+            if (localStorage.getItem('savings')) {
+                savings = parseFloat(localStorage.getItem('savings'));
+                leftSaving = savings; 
+                totalSavingsEl.textContent = savings.toFixed(2);
+                leftSavingEl.textContent = leftSaving.toFixed(2);
+                selectedCurrency = localStorage.getItem('currency');
+                currencySpentEl.textContent = selectedCurrency;
+                currencySavingsEl.textContent = selectedCurrency;
+                currencyLeftSavingEl.textContent = selectedCurrency;
+                totalSavingsInput.disabled = true;
+                currencySelector.disabled = true;
+                setSavingsBtn.disabled = true;
+            }
+
+            if (localStorage.getItem('expenses')) {
+                expenses = JSON.parse(localStorage.getItem('expenses'));
+                expenses.forEach(exp => {
+                    totalSpent += exp.amount;
+                    leftSaving -= exp.amount;
+                    addExpenseToTable(exp.description, exp.amount, exp.date);
+                });
+                totalSpentEl.textContent = totalSpent.toFixed(2);
+                leftSavingEl.textContent = leftSaving.toFixed(2);
+            }
         }
 
-        if (localStorage.getItem('expenses')) {
-            expenses = JSON.parse(localStorage.getItem('expenses'));
-            expenses.forEach(exp => {
-                totalSpent += exp.amount;
-                leftSaving -= exp.amount;
-                addExpenseToTable(exp.description, exp.amount, exp.date);
-            });
-            totalSpentEl.textContent = totalSpent.toFixed(2);
-            leftSavingEl.textContent = leftSaving.toFixed(2);
-        }
+        // Set session as active for this page load
+        localStorage.setItem('sessionActive', true);
     };
 
     // Function to add an expense to the table
@@ -397,9 +412,9 @@
     // Download button event
     downloadBtn.addEventListener('click', function() {
         const csvContent = 'data:text/csv;charset=utf-8,' 
-            + 'Total Savings,Total Spent,Left Saving\n'
-            + `${savings.toFixed(2)},${totalSpent.toFixed(2)},${leftSaving.toFixed(2)}\n\n`
-            + 'Description,Amount,Date\n'
+            + ['Total Savings,Total Spent,Left Saving\n']
+            + [`${savings.toFixed(2)},${totalSpent.toFixed(2)},${leftSaving.toFixed(2)}\n\n`]
+            + ['Description,Amount,Date\n']
             + expenses.map(exp => `${exp.description},${exp.amount.toFixed(2)},${exp.date}`).join('\n');
         
         const encodedUri = encodeURI(csvContent);
@@ -412,28 +427,31 @@
 
     // Clear all button event
     clearBtn.addEventListener('click', function() {
-        expenses = [];
-        totalSpent = 0;
-        savings = 0;
-        leftSaving = 0;
+        // Ask for confirmation before clearing all entries
+        if (confirm("Are you sure you want to clear all entries? This action cannot be undone.")) {
+            expenses = [];
+            totalSpent = 0;
+            savings = 0;
+            leftSaving = 0;
 
-        totalSavingsInput.disabled = false;
-        currencySelector.disabled = false;
-        setSavingsBtn.disabled = false;
-        totalSavingsInput.value = "";
+            totalSavingsInput.disabled = false;
+            currencySelector.disabled = false;
+            setSavingsBtn.disabled = false;
+            totalSavingsInput.value = "";
 
-        expenseTableBody.innerHTML = "";
-        totalSpentEl.textContent = "0";
-        totalSavingsEl.textContent = "0";
-        leftSavingEl.textContent = "0";
-        currencySpentEl.textContent = "$";
-        currencySavingsEl.textContent = "$";
-        currencyLeftSavingEl.textContent = "$";
+            expenseTableBody.innerHTML = "";
+            totalSpentEl.textContent = "0";
+            totalSavingsEl.textContent = "0";
+            leftSavingEl.textContent = "0";
+            currencySpentEl.textContent = "$";
+            currencySavingsEl.textContent = "$";
+            currencyLeftSavingEl.textContent = "$";
 
-        // Clear local storage
-        localStorage.removeItem('savings');
-        localStorage.removeItem('currency');
-        localStorage.removeItem('expenses');
+            // Clear local storage
+            localStorage.removeItem('savings');
+            localStorage.removeItem('currency');
+            localStorage.removeItem('expenses');
+        }
     });
 
     // Theme toggle event
@@ -443,6 +461,7 @@
         themeToggle.classList.toggle('fa-sun');
     });
 </script>
+
 
 </body>
 </html>
