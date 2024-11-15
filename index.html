@@ -541,6 +541,11 @@ const addExpenseBtn = document.getElementById('addExpenseBtn');
             alert("Expense exceeds your remaining savings.");
             return;
         }
+        
+        if (!date) {
+        alert("Please select a date for the expense.");
+        return;
+    }
 
         expenses.push({ description, amount, date });
         totalSpent += amount;
