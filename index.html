@@ -1,775 +1,118 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Expense Recorder</title>
-    
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link rel="icon" href="new.png" type="image/x-icon">
-
-
-    <style>
-        * {
-            scroll-behavior: smooth;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Poppins', sans-serif;
-            background-color:#f0f8ff;
-            margin: 0;
-            padding: 0;
-            transition: background-color 0.7s ease, color 0.5s ease;
-        }
-         /* Additional dark theme styles */
-         body.dark {
-            background-color: #2c2c2c;
-            color: #e0e0e0;
-        }
-
-        body.dark .container {
-            background-color: #3b3b3b;
-        }
-
-        body.dark h1 {
-            color: #f0db4f;
-        }
-
-        body.dark .dark-theme-toggle {
-            color: #f0db4f;
-        }
-
-        .container {
-            max-width: 900px;
-            margin: 50px auto;
-            padding: 30px;
-            background-color: #fffaf0;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
-            border-radius: 15px;
-            transition: background-color 0.3s;
-        }
-
-        h1 {
-            text-align: center;
-            color: #0056b3;
-            font-size: 2.5rem;
-            margin-bottom: 20px;
-            position: relative;
-        }
-
-        h1 i {
-            margin: 0 10px;
-        }
-
-        .dark-theme-toggle {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            font-size: 1.5rem;
-            cursor: pointer;
-            color: #666;
-            transition: color 0.3s;
-        }
-  .settings-section, .input-section {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 20px;
-        }
-
-        .settings-section input, .settings-section select, .input-section input {
-            padding: 12px;
-            font-size: 1rem;
-            border: 1px solid #ccc;
-            border-radius: 8px;
-            transition: 0.3s ease;
-        }
-
-        .settings-section input:focus, 
-        .settings-section select:focus,
-        .input-section input:focus {
-            border-color: #007bff;
-            background-color: #f9f9f9;
-        }
-
-        #setSavingsBtn, #addExpenseBtn, #downloadBtn, #clearBtn {
-            padding: 12px 20px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: background-color 0.3s, transform 0.2s;
-        }
-
-        #setSavingsBtn {
-            background-color: #28a745;
-            color: white;
-        }
-        #setSavingsBtn:hover {
-            background-color: #218838;
-            transform: translateY(-2px);
-        }
-
-        #addExpenseBtn {
-            background-color: #007bff;
-            color: white;
-        }
-        #addExpenseBtn:hover {
-            background-color: #0056b3;
-            transform: translateY(-2px);
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-
-        table th, table td {
-            padding: 15px;
-            text-align: left;
-            border-bottom: 1px solid #ddd;
-            font-size: 1rem;
-        }
-
-        .delete-btn {
-            padding: 8px 15px;
-            background-color: #dc3545;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: background-color 0.3s, transform 0.2s;
-        }
-
-        .delete-btn:hover {
-            background-color: #c82333;
-            transform: translateY(-2px);
-        }
-
-        .balance {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 30px;
-        }
-
-        .balance div {
-            font-size: 1.4rem;
-            font-weight: bold;
-        }
-
-        .buttons-section {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 20px;
-        }
-
-        #downloadBtn {
-            background-color: #ff8800;
-            color: white;
-        }
-        #downloadBtn:hover {
-            background-color: #ff7700;
-            transform: translateY(-2px);
-        }
-
-        #clearBtn {
-            background-color: #ff007f;
-            color: white;
-        }
-        #clearBtn:hover {
-            background-color: #e60073;
-            transform: translateY(-2px);
-        }
-
-        footer {
-            margin-top: 40px;
-            text-align: center;
-            color: #666;
-            font-size: 1.1rem; /* Adjust font size as needed */
-    font-weight: bold; /* Makes the text bolder */
-}
-footer {
-    margin-top: 40px;
-    text-align: center;
-    font-size: 1.1rem;
-    font-weight: bold;
-    color: #666; /* Light theme color */
-}
-
-/* Dark theme footer color */
-body.dark footer {
-    color: #f0db4f;
-    transition: color 0.5s ease, transform 0.3s ease; /* Adjust this color for better contrast on dark backgrounds */
-}
-
-
-        
-        body.dark {
-            background-color: #2c2c2c;
-            color: #e0e0e0;
-        }
-
-        body.dark .container {
-            background-color: #3b3b3b;
-            color: #e0e0e0;
-        }
-
-        body.dark h1 {
-            color: #f0db4f;
-        }
-
-        body.dark .dark-theme-toggle {
-            color: #f0db4f;
-        }
-
-        body.dark table th, body.dark table td {
-            border-color: #666;
-        }
-
-        body.dark input, body.dark select, body.dark button {
-            background-color: #444;
-            color: #e0e0e0;
-            border-color: #666;
-        }
-        footer {
-            margin-top: 40px;
-            text-align: center;
-            color: #666;
-            font-size: 0.9rem;
-        }
-       /* Social Section Styling */
-/* Social Section Styling */
-.social-section {
-    text-align: center;
-    margin-top: 40px;
-}
-
-.social-section h2 {
-    font-size: 1.8rem;
-    color: #aa3fd1; /* Light theme color */
-    margin-bottom: 10px;
-    font-weight: 700;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    position: relative; /* Position relative for underline animation */
-    transition: color 0.3s;
-}
-
-.social-section h2 i {
-    color: #0077b5; /* Icon color */
-}
-
-/* Underline Animation for Heading */
-.social-section h2::after {
-    content: "";
-    position: absolute;
-    bottom: -4px; /* Position slightly below text */
-    left: 0;
-    width: 100%;
-    height: 2px;
-    background-color: #b9305c; /* Underline color matching text */
-    transform: scaleX(0);
-    transform-origin: left;
-    transition: transform 0.4s ease;
-}
-
-.social-section h2:hover::after {
-    transform: scaleX(1); /* Animate underline from left to right */
-}
-
-/* Dark Theme Adjustments */
-body.dark .social-section h2 {
-    color: #218838; /* Dark theme color */
-}
-
-body.dark .social-section h2::after {
-    background-color:#aa3fd1; /* Underline matches dark theme text */
-}
-
-/* Social Icons Styling */
-.social-icons {
-    display: flex;
-    justify-content: center;
-    gap: 20px;
-}
-
-.social-icons a {
-    font-size: 2rem;
-    color: #0077b5;
-    transition: color 0.5s ease, transform 0.3s ease;
-}
-
-.social-icons a:hover {
-    transform: translateY(-5px);
-}
-
-
-
-        /* Social Media Icons */
-        .social-icons {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            margin-top: 20px;
-        }
-
-        .social-icons a {
-            font-size: 1.8rem;
-            color: #0077b5; /* LinkedIn default */
-            transition: color 0.3s, transform 0.3s;
-        }
-
-        .social-icons a:hover {
-            transform: translateY(-5px);
-        }
-
-        .social-icons .github:hover {
-            color: #ba5858;
-        }
-
-        .social-icons .linkedin:hover {
-            color: #40a8e0;
-        }
-
-        .social-icons .instagram:hover {
-            color: #c13584;
-        }
-
-        /* Dark theme styles */
-        body.dark {
-            background-color: #2c2c2c;
-            color: #e0e0e0;
-        }
-
-        body.dark .container {
-            background-color: #3b3b3b;
-            color: #e0e0e0;
-        }
-
-        body.dark h1 {
-            color: #f0db4f;
-        }
-
-        body.dark .dark-theme-toggle {
-            color: #f0db4f;
-        }
-
-        body.dark .social-icons a {
-            color: #e0e0e0;
-        }
-
-        body.dark .social-icons .github:hover {
-            color: #ba5858;
-        }
-
-        body.dark .social-icons .linkedin:hover {
-            color: #40a8e0;
-        }
-
-        body.dark .social-icons .instagram:hover {
-            color: #f77737;
-        }
-         @media (max-width: 768px) {
-            
-        .container {
-            padding: 20px;
-            margin: 20px auto;
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
-        }
-
-        h1 {
-            font-size: 1.8rem;
-        }
-
-        .settings-section,
-        .input-section {
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .settings-section input,
-        .settings-section select,
-        .input-section input,
-        #setSavingsBtn,
-        #addExpenseBtn {
-            width: 100%;
-            margin-bottom: 10px;
-        }
-
-        table {
-            font-size: 0.9rem;
-        }
-
-        .balance {
-            flex-direction: column;
-            align-items: flex-start;
-            gap: 10px;
-        }
-
-        .balance div {
-            font-size: 1rem;
-        }
-
-        .buttons-section {
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        #downloadBtn,
-        #clearBtn {
-            width: 100%;
-        }
-
-        .social-section h2 {
-            font-size: 1.5rem;
-        }
-
-        .social-icons a {
-            font-size: 1.5rem;
-        }
-    }
-
-    @media (max-width: 480px) {
-        h1 {
-            font-size: 1.5rem;
-        }
-
-        .settings-section,
-        .input-section {
-            flex-direction: column;
-            gap: 8px;
-        }
-
-        .settings-section input,
-        .settings-section select,
-        .input-section input,
-        #setSavingsBtn,
-        #addExpenseBtn {
-            padding: 10px;
-            font-size: 0.9rem;
-        }
-
-        table th,
-        table td {
-            padding: 10px;
-        }
-
-        .balance div {
-            font-size: 0.9rem;
-        }
-
-        footer {
-            font-size: 0.8rem;
-        }
-
-        .social-icons a {
-            font-size: 1.2rem;
-        }
-    }
-    </style>
-</head>
-<body>
-
-<div class="container">
-    <h1>
-        <i class="fas fa-wallet"></i>Expense Recorder<i class="fas fa-wallet"></i>
-        <i class="fas fa-moon dark-theme-toggle" id="themeToggle"></i>
-    </h1>
-
-    <div class="settings-section">
-        <input type="number" id="totalSavingsInput" placeholder="Enter your total savings">
-        <select id="currencySelector">
-            <option value="$">USD ($)</option>
-            <option value="€">Euro (€)</option>
-            <option value="£">GBP (£)</option>
-            <option value="₹">INR (₹)</option>
-            <option value="¥">JPY (¥)</option>
-        </select>
-       <button id="setSavingsBtn">
-  <i class="fas fa-piggy-bank"></i> Set Savings
-</button>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Expense Tracker Pro Dashboard</title>
+    <link rel="stylesheet" href="assets/css/main.css" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  </head>
+  <body>
+    <div id="app-loader" class="app-loader">Loading dashboard…</div>
+    <div class="app-shell">
+      <aside class="sidebar" id="sidebar">
+        <h2>ExpensePro</h2>
+        <button id="mobile-nav-close" class="ghost">✕</button>
+        <nav>
+          <a href="#overview">Overview</a>
+          <a href="#transactions">Transactions</a>
+          <a href="#categories">Categories</a>
+          <a href="#analytics">Analytics</a>
+        </nav>
+        <div class="sidebar-actions">
+          <button id="theme-toggle" class="btn">Toggle Theme</button>
+          <button id="clear-all" class="danger">Clear Data</button>
+        </div>
+      </aside>
+
+      <main class="content">
+        <header class="topbar">
+          <button id="mobile-nav-open" class="ghost">☰</button>
+          <h1>Finance Dashboard</h1>
+          <div class="toolbar">
+            <input id="search" type="search" placeholder="Search transactions" />
+            <select id="range-filter">
+              <option value="all">All</option>
+              <option value="day">Today</option>
+              <option value="month">This Month</option>
+              <option value="year">This Year</option>
+              <option value="custom">Custom Range</option>
+            </select>
+            <input id="from-date" type="date" />
+            <input id="to-date" type="date" />
+            <select id="sort-by">
+              <option value="newest">Newest</option>
+              <option value="oldest">Oldest</option>
+              <option value="amount-desc">Amount High</option>
+              <option value="amount-asc">Amount Low</option>
+            </select>
+          </div>
+        </header>
+
+        <section id="overview" class="cards"></section>
+
+        <section class="panel form-panel">
+          <h2>Add Transaction</h2>
+          <form id="transaction-form">
+            <input name="title" placeholder="Title" required maxlength="80" />
+            <input name="amount" type="number" min="0.01" step="0.01" placeholder="Amount" required />
+            <select name="type" required>
+              <option value="income">Income</option>
+              <option value="expense">Expense</option>
+            </select>
+            <select name="category" id="category-select" required></select>
+            <input name="date" type="date" required />
+            <input name="notes" placeholder="Notes (optional)" maxlength="120" />
+            <button class="btn" type="submit">Save</button>
+          </form>
+          <div class="actions">
+            <button id="export-csv" class="btn">Export CSV</button>
+            <label class="btn upload-btn">Import JSON<input id="import-json" type="file" accept="application/json" /></label>
+          </div>
+        </section>
+
+        <section id="categories" class="panel">
+          <h2>Category Management</h2>
+          <form id="category-form">
+            <input name="categoryName" placeholder="New category" maxlength="30" required />
+            <button class="btn" type="submit">Add Category</button>
+          </form>
+          <ul id="category-list" class="category-list"></ul>
+        </section>
+
+        <section id="transactions" class="panel">
+          <h2>Recent Transactions</h2>
+          <div id="empty-state" class="empty-state hidden">No transactions found.</div>
+          <table>
+            <thead>
+              <tr>
+                <th>Title</th><th>Category</th><th>Type</th><th>Date</th><th>Amount</th><th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="transaction-body"></tbody>
+          </table>
+        </section>
+
+        <section id="analytics" class="grid-2">
+          <div class="panel"><canvas id="pieChart"></canvas></div>
+          <div class="panel"><canvas id="lineChart"></canvas></div>
+          <div class="panel"><canvas id="barChart"></canvas></div>
+          <div class="panel"><canvas id="donutChart"></canvas></div>
+        </section>
+      </main>
     </div>
 
-    <div class="input-section">
-        <input type="text" id="description" placeholder="Expense Description">
-        <input type="number" id="amount" placeholder="Amount">
-        <input type="date" id="date">
-       <button id="addExpenseBtn">
-        <i class="fas fa-plus-circle"></i> Add Expense
-    </button>
+    <div id="confirm-modal" class="modal hidden">
+      <div class="modal-card">
+        <p id="confirm-message">Are you sure?</p>
+        <div class="actions">
+          <button id="confirm-ok" class="danger">Confirm</button>
+          <button id="confirm-cancel" class="ghost">Cancel</button>
+        </div>
+      </div>
     </div>
 
-    <table id="expenseTable">
-        <thead>
-            <tr>
-                <th>Description</th>
-                <th>Amount</th>
-                <th>Date</th>
-                <th>Action</th>
-            </tr>
-        </thead>
-        <tbody>
-        </tbody>
-    </table>
-
-    <div class="balance">
-        <div>Total Spent: <span id="totalSpent">0</span> <span id="currencySpent">$</span></div>
-        <div>Savings: <span id="totalSavings">0</span> <span id="currencySavings">$</span></div>
-        <div>Left Saving: <span id="leftSaving">0</span> <span id="currencyLeftSaving">$</span></div>
-    </div>
-
-    <div class="buttons-section">
-       <button id="downloadBtn">
-  <i class="fas fa-download"></i> Download Expense History
-</button>
-<button id="clearBtn">
-  <i class="fas fa-trash-alt"></i> Clear All
-    </div>
-</div>
-    <!-- Your existing content -->
-
-    <div class="social-section">
-        <h2><i class="fas fa-share-alt"></i> Connect on Social...</h2>
-        <div class="social-icons">
-        <a href="https://github.com/yashverma77" class="github" target="_blank"><i class="fab fa-github"></i></a>
-        <a href="https://www.linkedin.com/in/yash-verma-618639299/" class="linkedin" target="_blank"><i class="fab fa-linkedin"></i></a>
-        <a href="https://www.instagram.com/yashverma_007/" class="instagram" target="_blank"><i class="fab fa-instagram"></i></a>
-    </div>
-
-    <footer>
-        &copy; 2024 Personal Finance Tracker. All rights reserved.
-    </footer>
-</div>
-<script>
-
-// Local Storage Keys
-// Local Storage Keys
-const STORAGE_KEYS = {
-    EXPENSES: 'expenseTrackerExpenses',
-    SAVINGS: 'expenseTrackerSavings',
-    CURRENCY: 'expenseTrackerCurrency',
-    TOTAL_SPENT: 'expenseTrackerTotalSpent'
-};
-
-const addExpenseBtn = document.getElementById('addExpenseBtn');
-const expenseTableBody = document.querySelector('#expenseTable tbody');
-const totalSpentEl = document.getElementById('totalSpent');
-const totalSavingsEl = document.getElementById('totalSavings');
-const leftSavingEl = document.getElementById('leftSaving');
-const currencySpentEl = document.getElementById('currencySpent');
-const currencySavingsEl = document.getElementById('currencySavings');
-const currencyLeftSavingEl = document.getElementById('currencyLeftSaving');
-const setSavingsBtn = document.getElementById('setSavingsBtn');
-const totalSavingsInput = document.getElementById('totalSavingsInput');
-const currencySelector = document.getElementById('currencySelector');
-const downloadBtn = document.getElementById('downloadBtn');
-const clearBtn = document.getElementById('clearBtn');
-
-let totalSpent = 0;
-let savings = 0;
-let leftSaving = 0;
-let selectedCurrency = '$';
-let expenses = [];
-
-// Save data to local storage
-function saveToLocalStorage() {
-    localStorage.setItem(STORAGE_KEYS.EXPENSES, JSON.stringify(expenses));
-    localStorage.setItem(STORAGE_KEYS.SAVINGS, savings.toString());
-    localStorage.setItem(STORAGE_KEYS.CURRENCY, selectedCurrency);
-    localStorage.setItem(STORAGE_KEYS.TOTAL_SPENT, totalSpent.toString());
-}
-
-// Load data from local storage
-function loadFromLocalStorage() {
-    const storedExpenses = localStorage.getItem(STORAGE_KEYS.EXPENSES);
-    const storedSavings = localStorage.getItem(STORAGE_KEYS.SAVINGS);
-    const storedCurrency = localStorage.getItem(STORAGE_KEYS.CURRENCY);
-    const storedTotalSpent = localStorage.getItem(STORAGE_KEYS.TOTAL_SPENT);
-
-    if (storedExpenses) {
-        expenses = JSON.parse(storedExpenses);
-        expenses.forEach(exp => addExpenseToTable(exp.description, exp.amount, exp.date));
-    }
-
-    if (storedSavings) {
-        savings = parseFloat(storedSavings);
-        totalSavingsEl.textContent = savings.toFixed(2);
-        totalSavingsInput.value = savings.toFixed(2);
-        totalSavingsInput.disabled = true;
-    }
-
-    if (storedCurrency) {
-        selectedCurrency = storedCurrency;
-        currencySelector.value = selectedCurrency;
-        currencySelector.disabled = true;
-        currencySpentEl.textContent = selectedCurrency;
-        currencySavingsEl.textContent = selectedCurrency;
-        currencyLeftSavingEl.textContent = selectedCurrency;
-    }
-
-    if (storedTotalSpent) {
-        totalSpent = parseFloat(storedTotalSpent);
-        totalSpentEl.textContent = totalSpent.toFixed(2);
-        leftSaving = savings - totalSpent;
-        leftSavingEl.textContent = leftSaving.toFixed(2);
-    }
-}
-
-// Function to add an expense to the table
-function addExpenseToTable(description, amount, date) {
-    const row = document.createElement('tr');
-    row.innerHTML = `
-        <td>${description}</td>
-        <td>${amount.toFixed(2)} ${selectedCurrency}</td>
-        <td>${date}</td>
-        <td><button class="delete-btn">Delete</button></td>
-    `;
-
-    row.querySelector('.delete-btn').addEventListener('click', function() {
-        totalSpent -= amount;
-        leftSaving = savings - totalSpent;
-        totalSpentEl.textContent = totalSpent.toFixed(2);
-        leftSavingEl.textContent = leftSaving.toFixed(2);
-        row.remove();
-        expenses = expenses.filter(exp => exp.description !== description || exp.amount !== amount || exp.date !== date);
-        saveToLocalStorage();
-    });
-
-    expenseTableBody.appendChild(row);
-}
-
-// Set savings button event
-setSavingsBtn.addEventListener('click', function() {
-    if (totalSavingsInput.value.trim() === "") {
-        alert("Total savings cannot be empty.");
-        return;
-    }
-    
-    savings = parseFloat(totalSavingsInput.value) || 0;
-    leftSaving = savings; 
-    selectedCurrency = currencySelector.value;
-    
-    totalSavingsEl.textContent = savings.toFixed(2);
-    leftSavingEl.textContent = leftSaving.toFixed(2); 
-    currencySpentEl.textContent = selectedCurrency;
-    currencySavingsEl.textContent = selectedCurrency;
-    currencyLeftSavingEl.textContent = selectedCurrency;
-
-    totalSavingsInput.disabled = true;
-    currencySelector.disabled = true;
-    setSavingsBtn.disabled = true;
-
-    saveToLocalStorage();
-});
-
-// Add expense button event
-addExpenseBtn.addEventListener('click', function() {
-    const description = document.getElementById('description').value.trim();
-    const amount = parseFloat(document.getElementById('amount').value) || 0;
-    const date = document.getElementById('date').value;
-
-    if (!description) {
-        alert("Expense description cannot be empty.");
-        return;
-    }
-
-    if (amount <= 0) {
-        alert("Amount must be greater than zero.");
-        return;
-    }
-
-    if (amount > leftSaving) {
-        alert("Expense exceeds your remaining savings.");
-        return;
-    }
-    
-    if (!date) {
-        alert("Please select a date for the expense.");
-        return;
-    }
-
-    expenses.push({ description, amount, date });
-    totalSpent += amount;
-    leftSaving = savings - totalSpent;
-
-    totalSpentEl.textContent = totalSpent.toFixed(2);
-    leftSavingEl.textContent = leftSaving.toFixed(2);
-
-    addExpenseToTable(description, amount, date);
-
-    document.getElementById('description').value = '';
-    document.getElementById('amount').value = '';
-    document.getElementById('date').value = '';
-
-    saveToLocalStorage();
-});
-
-// Download button event
-downloadBtn.addEventListener('click', function() {
-    const csvContent = 'data:text/csv;charset=utf-8,' 
-        + ['Total Savings,Total Spent,Left Saving\n']
-        + [`${savings.toFixed(2)},${totalSpent.toFixed(2)},${leftSaving.toFixed(2)}\n\n`]
-        + ['Description,Amount,Date\n']
-        + expenses.map(exp => `${exp.description},${exp.amount.toFixed(2)},${exp.date}`).join('\n');
-    
-    const encodedUri = encodeURI(csvContent);
-    const link = document.createElement('a');
-    link.setAttribute('href', encodedUri);
-    link.setAttribute('download', 'expense_history.csv');
-    document.body.appendChild(link);
-    link.click();
-});
-
-// Clear all button event
-clearBtn.addEventListener('click', function() {
-    if (confirm("Are you sure you want to clear all entries? This action cannot be undone.")) {
-        // Clear all local storage
-        Object.values(STORAGE_KEYS).forEach(key => localStorage.removeItem(key));
-
-        expenses = [];
-        totalSpent = 0;
-        savings = 0;
-        leftSaving = 0;
-
-        totalSavingsInput.disabled = false;
-        currencySelector.disabled = false;
-        setSavingsBtn.disabled = false;
-        totalSavingsInput.value = "";
-        currencySelector.value = "$";
-
-        expenseTableBody.innerHTML = "";
-        totalSpentEl.textContent = "0";
-        totalSavingsEl.textContent = "0";
-        leftSavingEl.textContent = "0";
-        currencySpentEl.textContent = "$";
-        currencySavingsEl.textContent = "$";
-        currencyLeftSavingEl.textContent = "$";
-    }
-});
-
-// Page refresh handling
-window.addEventListener('beforeunload', function (e) {
-    saveToLocalStorage();
-});
-
-// Load data on page load
-window.onload = function() {
-    loadFromLocalStorage();
-};
-
-// Theme toggle
-const themeToggle = document.getElementById('themeToggle');
-themeToggle.addEventListener('click', function() {
-    document.body.classList.toggle('dark');
-    
-    setTimeout(() => {
-        themeToggle.classList.toggle('fa-moon');
-        themeToggle.classList.toggle('fa-sun');
-    }, 250);
-});
-</script>
-</body>
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+    <script type="module" src="assets/js/main.js"></script>
+  </body>
 </html>
